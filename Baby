@@ -1,0 +1,62 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Baby extends Person{
+	
+	//Author: JIANG
+    // we use baby as a type of person and they don't have friends and only they have parent.
+
+	static List family = new ArrayList();
+	
+	public static void addfamily() {
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter name");
+		String name = sc.nextLine();
+		
+		System.out.println("Enter age");
+		int age = sc.nextInt();
+		
+		System.out.println("1. Male" + "   " + "2. Female");
+		String gender = selectgender();
+		
+		System.out.println("1. Parents" + "   " + "2. Dependents " + "3. Brother" + "4. Sister");
+		String status = selectfamily();
+		
+		if (age > 0 && age <=2) {
+			Baby b = new Baby();
+			b.setName(name);
+			b.setAge(age);
+			b.setGender(gender);
+			b.setStatus(status);
+			
+			family.add(b);
+
+		}
+		
+		else if (age > 16) {
+			Adults a = new Adults();
+			a.setName(name);
+			a.setAge(age);
+			a.setGender(gender);
+			a.setStatus(status);
+			
+			family.add(a);
+
+		}
+		
+		else if (age <= 16 && age > 2) {
+			Teenager t = new Teenager();
+			t.setName(name);
+			t.setAge(age);
+			t.setGender(gender);
+			t.setStatus(status);
+			
+			family.add(t);
+
+		}
+	}
+	
+	
+}
