@@ -1,0 +1,155 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Person {
+	
+	//Author: JIANG
+	//We use person as the main program to identify the user input whether they are friends, relative(son, daughter) and display it to the screen
+	static List profile = new ArrayList();
+	
+	private int age;
+	private String name;
+	private String gender;
+	private String status;
+	
+
+	public int getAge() {
+		return age;
+	}
+
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getGender() {
+		return gender;
+	}
+
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public static String selectgender() {
+		int choice;
+		String gender = null;
+		Scanner s = new Scanner(System.in);
+		do {
+			choice = s.nextInt();
+			if (choice == 1) {
+				gender= "Male";
+			}
+			else if (choice == 2) {
+				gender= "Female";
+			}
+			else System.out.println("Invalid choice");
+		}while (choice != 1 && choice != 2);
+		
+		return gender;
+	}
+	
+	public static String selectfamily() {
+		int choice;
+		String status = null;
+		Scanner s = new Scanner(System.in);
+		do {
+			choice = s.nextInt();
+			if (choice == 1) {
+				status = "parents";
+			}
+			else if (choice == 2) {
+				status= "depedent";
+			}
+			else if (choice == 3) {
+				status = "brother";
+			}
+			else if (choice == 4) {
+				status= "sister";
+			}
+			else System.out.println("Invalid choice");
+		}while (choice != 1 && choice != 2 && choice != 3 && choice != 4);
+		
+		return status;
+	}
+	
+	public static void addperson() {
+		Scanner sc1 = new Scanner(System.in);
+
+		System.out.println("Enter name");
+		String name = sc1.nextLine();
+		
+		System.out.println("Enter age");
+		int age = sc1.nextInt();
+		
+		System.out.println("1. Male" + "   " + "2. Female");
+		String gender = selectgender();
+		
+		System.out.println("Enter status");
+		String status = sc1.next();
+		
+		System.out.println("You have added this person");
+		
+		if ( age >=0 && age < 2) {
+			Person p = new Baby();
+			p.setAge(age);
+			p.setName(name);
+			p.setGender(gender);
+			p.setStatus(status);
+			
+			profile.add(p);
+		}
+		else if (age >=2 && age < 16 ) {
+			Person p = new Teenager();
+			p.setAge(age);
+			p.setName(name);
+			p.setGender(gender);
+			p.setStatus(status);
+			
+			profile.add(p);
+		}
+		else {
+			Person p = new Adults();
+			p.setAge(age);
+			p.setName(name);
+			p.setGender(gender);
+			p.setStatus(status);
+			
+			profile.add(p);
+		}
+	
+	}
+	
+
+	
+	public boolean equals(Object obj) {
+		Person p = (Person) obj;
+		return this.name.equals(p.name) && this.gender.equals(p.gender) && this.age == p.age;
+	}
+	
+	public String toString() {
+		return "[" + name + " " + " " + age + " " + gender + " " + status + "]";
+	}		
+}
