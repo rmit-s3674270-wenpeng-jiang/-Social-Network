@@ -9,17 +9,26 @@ public class MiniNet {
 		   
 		Scanner sc = new Scanner(System.in);
 		int input = 0;
+		
+		//Author: KWOK
+		//The purpose of this program is to show the input results to determine the relationship between those people. 
+		//If they are friends they will show them as a friend. If they are family they will show them as a family. 
+		//You can update , add, delete the user input when you select the person choice after you have put the user in the database.
+		
 		do {
+			System.out.println("Welcome to the MiniNet program. Please add a person first (min 2 persons) before you can use another functions. ");
 			System.out.println(" ");
 			System.out.println("MiniNet Menu");
 			System.out.println("=================================");
 			System.out.println("1. List everyone");
 			System.out.println("2. Add a person");
 			System.out.println("3. Select a person");
-			System.out.println("4. Are these two friends?");
-			System.out.println("5. Exit");
+			System.out.println("0. Exit");
+			System.out.println("                                ");
+			System.out.println("Enter an Option:                ");
 			
 			input = sc.nextInt();
+			System.out.println("  Your options are:  " + input);
 			
 			if (input == 1) {
 				display(Person.profile);
@@ -30,13 +39,17 @@ public class MiniNet {
 			}
 		
 			else if (input == 3) {
+				System.out.println("Please select one of the persons from the list.");
 				select(Person.profile);
 				int selection;
 				Scanner sc2 = new Scanner(System.in);
 				selection = sc2.nextInt();
 				
 				
+				int choice = 0;
+				
 				do {
+				System.out.println("0. Back to previous Menu");
 				System.out.println("1. Update the profile of the selected person");
 				System.out.println("2. Delete selected person");
 				System.out.println("3. Display the profile of selected person");
@@ -44,10 +57,14 @@ public class MiniNet {
 				System.out.println("5. Show friends list");
 				System.out.println("6. Add family members");
 				System.out.println("7. Show family list");
+				System.out.println("                                ");
+				System.out.println("Enter an Option:                ");
 
 				
-				int choice;
+				
 				choice = sc2.nextInt();
+				System.out.println("  Your options are:  " + input);
+				
 				if (choice == 1) {
 					Person.profile.remove(selection-1);
 					Person.addperson();
@@ -62,6 +79,7 @@ public class MiniNet {
 				}
 				else if (choice == 4) {
 					if(Person.profile.get(selection-1) instanceof Teenager) {
+						
 						Teenager.addfriends();
 						}
 					
@@ -72,9 +90,11 @@ public class MiniNet {
 					if(Person.profile.get(selection-1) instanceof Baby) {
 						System.out.println("You cannot add friends");
 						}
+					
 					}
 				else if (choice == 5) {
 					if(Person.profile.get(selection-1) instanceof Teenager) {
+							
 						display(Teenager.friend);
 						}
 				
@@ -111,13 +131,22 @@ public class MiniNet {
 					if(Person.profile.get(selection-1) instanceof Baby) {
 						display(Baby.family);
 						}
-					}
-				}while(input != 1 && input != 2 && input !=3 && input != 4 && input !=5 && input != 6 && input != 7);
+				
+				}
+				else if (choice == 0) {
+					System.out.println("Back to previous Menu");
+				}
+					else if(choice != 1 && choice != 2 && choice != 3 && choice != 4 && choice != 5 && choice != 6 && choice != 7) {
+					System.out.println("Invalid option");
+					}	
+				} while(choice !=0);
 			}
 
-			else if (input == 5) {
-				
+			else if (input == 0) {
+				System.out.println("Program Exit");
 			}
+			
+			
 			
 			else if (input != 1 && input != 2 && input !=3 && input != 4 && input != 0) {
 				System.out.println("Invalid option");
@@ -127,18 +156,16 @@ public class MiniNet {
 }
 
 
-	public static void display(List list) {
-		for (Iterator it = list.iterator(); it.hasNext();) {
-			Person p = (Person)it.next();	
-			System.out.println(p);
+public static void display(List list) {
+	for (Iterator it = list.iterator(); it.hasNext();) {
+		Person p = (Person)it.next();	
+		System.out.println(p);
 		}
 	}
 
-	public static void select(List list) {
-		for (int i = 0; i < list.size(); i++) {
-			System.out.println(i + 1 +"-------------" + list.get(i));
+public static void select(List list) {
+	for (int i = 0; i < list.size(); i++) {
+		System.out.println(i + 1 +"-------------" + list.get(i));
 		}
 	}
-
 }
-
