@@ -1,0 +1,107 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+
+public class Teenager extends Person{
+
+	//Author: JIANG
+    //We define teenager as type of a person and they can be friends between 2 to 16 years old.
+	
+	static List friend = new ArrayList();
+	static List family = new ArrayList();
+	/**
+	 * 
+	 */
+	public static void addfriends() {
+		
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter your friend's name");
+		
+		String name = sc.nextLine();
+		
+		System.out.println("Enter you friend's age");
+		
+		int age = sc.nextInt();
+		if (age < 2 || age > 16) {
+			System.out.println("You cannot make a friend with this person");
+			return;
+		}
+
+		System.out.println("1. Male" + "   " + "2. Female");
+		String gender = selectgender();
+		
+		System.out.println("Enter you friend's status");
+		String status = sc.next();
+			
+		Teenager t = new Teenager();
+		t.setName(name);
+		t.setAge(age);
+		t.setGender(gender);
+		t.setStatus(status);
+		
+		for (Iterator it = family.iterator(); it.hasNext();) {
+			Object obj = (Object) it.next();
+			
+			if (family.contains(t)) {
+				System.out.println("This person is your family member");
+				return;
+			}
+		}
+		
+		System.out.println("You have added your friend");
+		
+		friend.add(t);
+
+	}
+	
+		
+	public static void addfamily() {
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter name");
+		String name = sc.nextLine();
+		
+		System.out.println("Enter age");
+		int age = sc.nextInt();
+		
+		System.out.println("1. Male" + "   " + "2. Female");
+		String gender = selectgender();
+		
+		System.out.println("1. Parents" + "   " + "2. Dependents " + "3. Brother" + "4. Sister");
+		String status = selectfamily();
+		
+		if (age > 0 && age <=2) {
+			Baby b = new Baby();
+			b.setName(name);
+			b.setAge(age);
+			b.setGender(gender);
+			b.setStatus(status);
+			
+			family.add(b);
+
+		}
+		
+		else if (age > 16) {
+			Adults a = new Adults();
+			a.setName(name);
+			a.setAge(age);
+			a.setGender(gender);
+			a.setStatus(status);
+			
+			family.add(a);
+
+		}
+		
+		else if (age <= 16 && age > 2) {
+			Teenager t = new Teenager();
+			t.setName(name);
+			t.setAge(age);
+			t.setGender(gender);
+			t.setStatus(status);
+			
+			family.add(t);
+
+		}
+	}
+}
