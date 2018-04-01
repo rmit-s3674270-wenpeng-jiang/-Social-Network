@@ -5,8 +5,6 @@ import java.util.Scanner;
 
 public class Teenager extends Person{
 
-	//Author: JIANG
-    //We define teenager as type of a person and they can be friends between 2 to 16 years old.
 	
 	static List friend = new ArrayList();
 	static List family = new ArrayList();
