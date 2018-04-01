@@ -4,8 +4,7 @@ import java.util.Scanner;
 
 public class Baby extends Person{
 	
-	//Author: JIANG
-    // we use baby as a type of person and they don't have friends and only they have parent.
+	
 
 	static List family = new ArrayList();
 	
