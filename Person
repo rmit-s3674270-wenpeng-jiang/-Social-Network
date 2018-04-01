@@ -4,8 +4,7 @@ import java.util.Scanner;
 
 public class Person {
 	
-	//Author: JIANG
-	//We use person as the main program to identify the user input whether they are friends, relative(son, daughter) and display it to the screen
+	
 	static List profile = new ArrayList();
 	
 	private int age;
