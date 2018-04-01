@@ -9,10 +9,7 @@ public class MiniNet {
 		Scanner sc = new Scanner(System.in);
 		int input = 0;
 		
-		//Author: KWOK
-		//The purpose of this program is to show the input results to determine the relationship between those people. 
-		//If they are friends they will show them as a friend. If they are family they will show them as a family. 
-		//You can update , add, delete the user input when you select the person choice after you have put the user in the database.
+		
 		
 		do {
 			System.out.println("Welcome to the MiniNet program. Please add a person first (min 2 persons) before you can use another functions. ");
