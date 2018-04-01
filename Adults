@@ -5,8 +5,6 @@ import java.util.Scanner;
 
 public class Adults extends Person {
 	
-	//Author: KWOK
-    //We use Adult to define one of the person who can have friends only when they are both over 16 years old.
 	
 	static List friend = new ArrayList();
 	static List family = new ArrayList();
