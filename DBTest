@@ -1,0 +1,137 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DBTest {
+	
+	public static void connectdb() {
+		Connection con = null;
+		try {
+			//Registering the HSQLDB JDBC driver
+			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			//Creating the connection with HSQLDB
+			con = DriverManager.getConnection("jdbc:hsqldb:mem://localhost/testdb", "SA", "");
+			if (con!= null){
+				AlertBox.alert("Congratulation", "Connection created successfully");
+			}else{
+				AlertBox.alert("Error", "Problem with creating connection");
+			}
+		
+		}  catch (Exception e) {
+			System.out.println("Problem with creating connection");
+		}
+	}
+	
+	public static void creattable() {
+		Connection con = null;
+		Statement stmt = null;
+		int result = 0;
+		
+		try {
+			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			con = DriverManager.getConnection("jdbc:hsqldb:mem://localhost/testdb", "SA", "");
+			stmt = con.createStatement();
+			
+			result = stmt.executeUpdate("CREATE TABLE person (Name VARCHAR(20) NOT NULL, File VARCHAR(40) NOT NULL,"
+					+ "Status VARCHAR(20) NOT NULL, Gender VARCHAR(20) NOT NULL, Age INT NOT NULL, State VARCHAR(20) NOT NULL,"
+					+ " PRIMARY KEY (Name));");
+			con.commit();
+			AlertBox.alert("Congratulation", "Table created successfully");
+			
+		}catch (Exception e) { 
+			System.out.println("Problem with creating table");
+		}
+	}
+	
+	public static void addintodb(Person p) {
+		Connection con = null;
+		Statement stmt = null;
+		try {
+			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			con = DriverManager.getConnection("jdbc:hsqldb:mem://localhost/testdb", "SA", "");
+			stmt = con.createStatement();
+			String sql = "insert into person (Name, File, Status, Gender, Age, State) values (?,?,?,?,?,?)";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, p.getName());
+			ps.setString(2, p.getFile());
+			ps.setString(3, p.getStatus());
+			ps.setString(4, p.getGender());
+			ps.setInt(5, p.getAge());
+			ps.setString(6, p.getState());
+			ps.execute();
+		} catch (SQLException e) {
+			System.out.println( "Failed to synchronize");
+		} catch (ClassNotFoundException e) {
+			System.out.println( "Failed to synchronize");
+		}
+	}
+	
+	public static void deletedb(Person p) {
+		Connection con = null;
+		Statement stmt = null;
+		try {
+			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			con = DriverManager.getConnection("jdbc:hsqldb:mem://localhost/testdb", "SA", "");
+			stmt = con.createStatement();
+			String sql = "DELETE FROM person WHERE name = ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, p.getName());
+			ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			System.out.println("Failed to synchronize");
+		} catch (ClassNotFoundException e) {
+			System.out.println("Failed to synchronize");
+		}
+	}
+	
+	public static void viewdb() {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet result = null;
+	    
+
+		try {
+			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			con = DriverManager.getConnection( "jdbc:hsqldb:mem://localhost/testdb", "SA", "");
+			stmt = con.createStatement();
+			result = stmt.executeQuery("SELECT * FROM person");
+	        
+
+			while (result.next()){
+	        	 System.out.println(result.getString("Name")+" | "+
+	        			result.getString("File") + " | " +
+	     				result.getString("Status")+" | "+
+	     				result.getString("Gender") +" | "+ 
+	     				result.getInt("Age") +" | "+ 
+	     				result.getString("State"));
+			}
+		} catch (Exception e) {
+			System.out.println("Error");
+		}   
+	}
+	
+	public static boolean checkdatabase() {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet result = null;
+		try {
+			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			con = DriverManager.getConnection( "jdbc:hsqldb:mem://localhost/testdb", "SA", "");
+			stmt = con.createStatement();
+			result = stmt.executeQuery("SELECT * FROM person");
+
+			if (!result.next()) {
+				AlertBox.alert("Error", "Database is empty");
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+}
