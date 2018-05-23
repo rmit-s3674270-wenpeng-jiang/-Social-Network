@@ -1,0 +1,126 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class Child extends Person {
+	public Child() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	List<Child> friendslist = new ArrayList<Child>();
+	List<Adult> parentslist = new ArrayList<Adult>();
+	List<Person> classmatelist = new ArrayList<Person>();
+	
+	public class NoParentException extends Exception{}
+	public class NotToBeFriendsException extends Exception{}
+	public class TooYoungException extends Exception{}
+	public class NotToBeClassmateException extends Exception{}
+	
+	
+	public void connectfriends(Object obj) throws Exception{
+		try {
+			if (obj instanceof Adult) {
+				throw new NotToBeFriendsException();
+			}
+			if (obj instanceof YoungChild) {
+				throw new TooYoungException();
+			}
+
+			if (obj instanceof Child) {
+				Child c = (Child) obj;
+				if(this.getAge() - c.getAge() > 3 || c.getAge() - this.getAge() > 3) {
+					throw new NotToBeFriendsException();
+				}
+				else {
+					this.friendslist.add(c);
+					AlertBox.alert("Congratulation ", "You added a friend");
+					if (!(c.friendslist.contains(this))) {
+						c.friendslist.add(this);			//add back
+					}
+				}
+			}
+			
+		}catch (NotToBeFriendsException e) {
+			AlertBox.alert("Error", "Cannot make friends with an adult or child with an age gap larger than 3");
+		}catch (TooYoungException e) {
+			AlertBox.alert("Error", "Cannot make friends with a young child");
+		}
+	}
+	
+	public void connectparents(Object obj) {	
+		if (this.parentslist.size() == 2) {
+			AlertBox.alert("Error", "Fail to add a parent");
+		}
+		else if (obj instanceof Adult) {
+			Adult a = (Adult) obj;
+			this.parentslist.add(a);
+			AlertBox.alert("Congratulation ", "You added a parent");
+			if (!(a.childrenlist.contains(this))) {
+				a.childrenlist.add(this);
+			}
+		}
+	}
+	
+	public void connectclassmates(Object obj) throws Exception{
+		try {
+			if (obj instanceof YoungChild) {
+				throw new NotToBeClassmateException();
+			}
+			if (obj instanceof Child) {
+				Child c = (Child) obj;
+				this.classmatelist.add(c);
+				AlertBox.alert("Congratulation ", "You added a classmate");
+				if (!(c.classmatelist.contains(this))) {
+					c.classmatelist.add(this);
+				}
+			}
+			if (obj instanceof Adult) {
+				Adult a = (Adult) obj;
+				this.classmatelist.add(a);
+				AlertBox.alert("Congratulation ", "You added a classmate");
+				if (!(a.classmatelist.contains(this))) {
+					a.classmatelist.add(this);
+				}
+			}
+		}catch (NotToBeClassmateException e) {
+			AlertBox.alert("Error", "Cannot connect a young child in a classmate relation");
+		}
+	}
+	
+	public void identify(Object obj) throws Exception {
+		AlertBox box = new AlertBox();
+		try {
+			if (this.parentslist.size() < 2) {   //No parents or only one parent
+				throw new NoParentException();
+			}
+			if (!(this.parentslist.get(0).couplelist.contains(this.parentslist.get(1)))) { // Parents are not couple
+				throw new NoParentException();
+			}
+			if (this.parentslist.contains(obj)) {
+				Adult a = (Adult) obj;
+				box.alert("Relationship", a.getName() + " " + this.getName() + " parents");
+			}
+			else {
+				box.alert("Relationship", " Not parents");
+			}
+		}catch(NoParentException e){
+			box.alert("Relationship", "No parents or only one parent");
+		}
+		
+		if (this.friendslist.contains(obj)) {
+			Child c = (Child) obj;
+			box.alert("Relationship", c.getName() + " " + this.getName() + " friends");
+		}
+		else {
+			System.out.println("They are not friends");
+		}
+		
+		if (this.classmatelist.contains(obj)) {
+			Person p = (Person) obj;
+			box.alert("Relationship", p.getName() + " " + this.getName() + " classmates");
+		}
+		else {
+			box.alert("Relationship", "They are not classmates");
+		}
+	}	
+}
