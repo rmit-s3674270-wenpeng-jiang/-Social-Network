@@ -2,153 +2,233 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TextField;
+
+
 public class Person {
+	public class NoSuchAgeException extends Exception{}
+
 	
-	
-	static List profile = new ArrayList();
-	
+	static ObservableList <Person> person = FXCollections.observableArrayList();
 	private int age;
+	private String file;
 	private String name;
 	private String gender;
 	private String status;
+	private String state;
 	
-
+	
+	public Person() {
+		super();
+		this.age = age;
+		this.file = file;
+		this.name = name;
+		this.gender = gender;
+		this.status = status;
+		this.state = state;
+	}	
+	
+	
 	public int getAge() {
 		return age;
 	}
-
-
 	public void setAge(int age) {
 		this.age = age;
 	}
-
-
+	
+	public String getFile () {
+		return file;
+	}
+	
+	public void setFile(String file) {
+		this.file = file;
+	}
+	
 	public String getName() {
 		return name;
 	}
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
 	public String getGender() {
 		return gender;
 	}
-
-
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-
-
 	public String getStatus() {
 		return status;
 	}
-
-
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
-	public static String selectgender() {
-		int choice;
-		String gender = null;
-		Scanner s = new Scanner(System.in);
-		do {
-			choice = s.nextInt();
-			if (choice == 1) {
-				gender= "Male";
-			}
-			else if (choice == 2) {
-				gender= "Female";
-			}
-			else System.out.println("Invalid choice");
-		}while (choice != 1 && choice != 2);
-		
-		return gender;
+	public String getState() {
+		return state;
 	}
-	
-	public static String selectfamily() {
-		int choice;
-		String status = null;
-		Scanner s = new Scanner(System.in);
-		do {
-			choice = s.nextInt();
-			if (choice == 1) {
-				status = "parents";
-			}
-			else if (choice == 2) {
-				status= "depedent";
-			}
-			else if (choice == 3) {
-				status = "brother";
-			}
-			else if (choice == 4) {
-				status= "sister";
-			}
-			else System.out.println("Invalid choice");
-		}while (choice != 1 && choice != 2 && choice != 3 && choice != 4);
-		
-		return status;
-	}
-	
-	public static void addperson() {
-		Scanner sc1 = new Scanner(System.in);
-
-		System.out.println("Enter name");
-		String name = sc1.nextLine();
-		
-		System.out.println("Enter age");
-		int age = sc1.nextInt();
-		
-		System.out.println("1. Male" + "   " + "2. Female");
-		String gender = selectgender();
-		
-		System.out.println("Enter status");
-		String status = sc1.next();
-		
-		System.out.println("You have added this person");
-		
-		if ( age >=0 && age < 2) {
-			Person p = new Baby();
-			p.setAge(age);
-			p.setName(name);
-			p.setGender(gender);
-			p.setStatus(status);
-			
-			profile.add(p);
-		}
-		else if (age >=2 && age < 16 ) {
-			Person p = new Teenager();
-			p.setAge(age);
-			p.setName(name);
-			p.setGender(gender);
-			p.setStatus(status);
-			
-			profile.add(p);
-		}
-		else {
-			Person p = new Adults();
-			p.setAge(age);
-			p.setName(name);
-			p.setGender(gender);
-			p.setStatus(status);
-			
-			profile.add(p);
-		}
-	
+	public void setState(String state) {
+		this.state = state;
 	}
 	
 
 	
-	public boolean equals(Object obj) {
-		Person p = (Person) obj;
-		return this.name.equals(p.name) && this.gender.equals(p.gender) && this.age == p.age;
+	public void addperson() throws Exception{
+		
+		try {
+			if (age >= 0 && age <=2) {
+				YoungChild y = new YoungChild();
+				System.out.println("You have added this person as YoungChild");
+				y.setName(name);
+				y.setFile(file);
+				y.setGender(gender);
+				y.setStatus(status);
+				y.setState(state);
+				
+				AlertBox.alert("Congratulation ", "You have added this person as YoungChild");
+				person.add(y);	
+				DBTest.addintodb(y);
+			}
+			else if (age <= 16 && age > 2) {
+				Child c = new Child();
+					
+				c.setAge(age);	
+				c.setFile(file);
+				c.setName(name);
+				c.setGender(gender);
+				c.setStatus(status);
+				c.setState(state);
+				
+				AlertBox.alert("Congratulation ", "You have added this person as Child");
+				person.add(c);
+				
+				DBTest.addintodb(c);
+
+			}
+			else if (age > 16 && age <= 150) {
+				Adult a = new Adult();
+		
+				a.setAge(age);
+				a.setFile(file);
+				a.setName(name);
+				a.setGender(gender);
+				a.setStatus(status);
+				a.setState(state);
+					
+				AlertBox.alert("Congratulation ", "You have added this person as Adult");
+				person.add(a);
+				
+				DBTest.addintodb(a);
+			}
+			else {
+				throw new NoSuchAgeException();
+			}
+		}catch (NoSuchAgeException e) {
+			AlertBox.alert("Congratulation ", "Age cannot be nagative or over 150");
+		}
+		
+		DBTest.viewdb();
 	}
+	
 	
 	public String toString() {
-		return "[" + name + " " + " " + age + " " + gender + " " + status + "]";
-	}		
+		return (this.getName() + 
+				" " + this.getFile() +
+				" " + this.getAge() + 
+				" " + this.getGender() + 
+				" " + this.getStatus() + 
+				" " + this.getState());
+	}
+	
+	// throw exceptions if input invalid number or text
+	public boolean GenderisString(TextField input, String message) {
+		try {
+			if (input.getText().equals("M") || input.getText().equals("F")) {
+				gender = input.getText();
+				return true;
+			}
+			else {
+				throw new Exception();
+			}	
+		}
+		catch (Exception e){
+			AlertBox.alert("Error: ", "Gender " + message + " is invalid ");
+			return false;
+		}
+	}
+		
+	public boolean FileisString(TextField input, String message) {
+		try {
+	
+				file = input.getText();
+				return true;
+		
+		}
+		catch (Exception e){
+			AlertBox.alert("Error: ", "File " + message + " is invalid ");
+			return false;
+		}
+	}
+	
+	public boolean StatusisString(TextField input, String message) {
+		try {
+	
+				status = input.getText();
+				return true;
+		
+		}
+		catch (Exception e){
+			AlertBox.alert("Error: ", "Status " + message + " is invalid ");
+			return false;
+		}
+	}
+	
+	public boolean StateisString(TextField input, String message) {
+		try {
+			if (input.getText().equals("ACT") || input.getText().equals("NSW")
+					|| input.getText().equals("NT") || input.getText().equals("QLD")
+					|| input.getText().equals("SA") || input.getText().equals("TAS")
+					|| input.getText().equals("VIC") || input.getText().equals("WA")) 
+			{
+				state = input.getText();
+				return true;
+			}
+			else {
+				throw new Exception();
+			}	
+		}
+		catch (Exception e){
+			AlertBox.alert("Error: ", "State " + message + " is invalid ");
+			return false;
+		}
+	}
+	
+	public boolean NameisString(TextField input, String message) {
+		try {
+			name = input.getText();
+			return true;
+		}
+		catch (Exception e){
+			AlertBox.alert("Error: ", "Name " + message + " is invalid ");
+			return false;
+		}
+	}
+	
+	public boolean AgeisInt (TextField input, String message) {
+		try {
+			age = Integer.parseInt(input.getText());
+			return true;
+		}
+		catch (NumberFormatException e){
+			AlertBox.alert("Error", "Age " + message + " is invalid ");
+			return false;
+		}
+	}
+	
+	
+	
+	public static ObservableList <Person> getPerson(){
+		return person;
+	}
+
 }
