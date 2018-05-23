@@ -1,167 +1,1253 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-public class MiniNet {
-	public static void main(String[] args) {
-		   
-		Scanner sc = new Scanner(System.in);
-		int input = 0;
-		
-		
-		
-		do {
-			System.out.println("Welcome to the MiniNet program. Please add a person first (min 2 persons) before you can use another functions. ");
-			System.out.println(" ");
-			System.out.println("MiniNet Menu");
-			System.out.println("=================================");
-			System.out.println("1. List everyone");
-			System.out.println("2. Add a person");
-			System.out.println("3. Select a person");
-			System.out.println("0. Exit");
-			System.out.println("                                ");
-			System.out.println("Enter an Option:                ");
-			
-			input = sc.nextInt();
-			System.out.println("  Your options are:  " + input);
-			
-			if (input == 1) {
-				display(Person.profile);
-			}
-			
-			else if (input == 2) {
-				Person.addperson();
-			}
-		
-			else if (input == 3) {
-				System.out.println("Please select one of the persons from the list.");
-				select(Person.profile);
-				int selection;
-				Scanner sc2 = new Scanner(System.in);
-				selection = sc2.nextInt();
-				
-				
-				int choice = 0;
-				
-				do {
-				System.out.println("0. Back to previous Menu");
-				System.out.println("1. Update the profile of the selected person");
-				System.out.println("2. Delete selected person");
-				System.out.println("3. Display the profile of selected person");
-				System.out.println("4. Add friends ");
-				System.out.println("5. Show friends list");
-				System.out.println("6. Add family members");
-				System.out.println("7. Show family list");
-				System.out.println("                                ");
-				System.out.println("Enter an Option:                ");
-
-				
-				
-				choice = sc2.nextInt();
-				System.out.println("  Your options are:  " + input);
-				
-				if (choice == 1) {
-					Person.profile.remove(selection-1);
-					Person.addperson();
-					}
-				
-				else if (choice == 2) {
-					Person.profile.remove(selection-1);
-					System.out.println("The person has been successfully deleted");
-					}
-				else if (choice == 3) {
-					System.out.println(Person.profile.get(selection-1));
-				}
-				else if (choice == 4) {
-					if(Person.profile.get(selection-1) instanceof Teenager) {
-						
-						Teenager.addfriends();
-						}
-					
-					if(Person.profile.get(selection-1) instanceof Adults) {
-						Adults.addfriends();
-						}
-					
-					if(Person.profile.get(selection-1) instanceof Baby) {
-						System.out.println("You cannot add friends");
-						}
-					
-					}
-				else if (choice == 5) {
-					if(Person.profile.get(selection-1) instanceof Teenager) {
-							
-						display(Teenager.friend);
-						}
-				
-					if(Person.profile.get(selection-1) instanceof Adults) {
-							display(Adults.friend);
-						}
-				
-					if(Person.profile.get(selection-1) instanceof Baby) {
-						System.out.println("You cannot add friends");
-						}	
-					}
-				else if (choice == 6) {
-					if(Person.profile.get(selection-1) instanceof Teenager) {
-						Teenager.addfamily();
-						}
-			
-					if(Person.profile.get(selection-1) instanceof Adults) {
-						Adults.addfamily();
-						}
-			
-					if(Person.profile.get(selection-1) instanceof Baby) {
-						Baby.addfamily();
-						}
-					}
-				else if (choice == 7) {
-					if(Person.profile.get(selection-1) instanceof Teenager) {
-						display(Teenager.family);	
-						}
-			
-					if(Person.profile.get(selection-1) instanceof Adults) {
-						display(Adults.family);
-						}
-			
-					if(Person.profile.get(selection-1) instanceof Baby) {
-						display(Baby.family);
-						}
-				
-				}
-				else if (choice == 0) {
-					System.out.println("Back to previous Menu");
-				}
-					else if(choice != 1 && choice != 2 && choice != 3 && choice != 4 && choice != 5 && choice != 6 && choice != 7) {
-					System.out.println("Invalid option");
-					}	
-				} while(choice !=0);
-			}
-
-			else if (input == 0) {
-				System.out.println("Program Exit");
-			}
-			
-			
-			
-			else if (input != 1 && input != 2 && input !=3 && input != 4 && input != 0) {
-				System.out.println("Invalid option");
-			} 
-		} while(input != 0);
+public class Mininet extends Application {
+	Stage window;
+	Scene homepage;
+	Scene displaypage;
+	Scene addpage;
+	Scene selectpage;
+	Scene connectpage;
+	Scene friendconnection;
+	Scene parentsconnection;
+	Scene childconnection;
+	Scene coupleconnection;
+	Scene classmatesconnection;
+	Scene colleaguesconnection;
+	Scene deletepersonpage;
+	Scene identifyrelationship;
+	TableView<Person> personlist;
+	TableView<Person> personlist1;
+	TableView<Person> personlistinfriendspage;
+	TableView<Person> personlistinparentspage;
+	TableView<Person> personlistinchildrenpage;
+	TableView<Person> personlistincouplepage;
+	TableView<Person> personlistinclassmatespage;
+	TableView<Person> personlistincolleaguespage;
+	TableView<Person> personlistindeletepage;
+	TableView<Person> personlistinidentifypage;
 	
-}
+	class TooYoungException extends Exception{}
+	class NoChildException extends Exception{}
+	class NotToBeClassmateException extends Exception{}
+	class NoColleagueException extends Exception{}
+	class NoCoupleException extends Exception{}
+	
+	public static void main (String[] args) throws Exception {
+		launch(args);
+		
+	}	
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		// TODO Auto-generated method stub
+		DBTest.connectdb();
+		DBTest.creattable();
+
+		
+		File src = new File ("C:/Users/monas/Desktop/personfile.txt");
+		
+		BufferedReader reader = null;
+		
+		try {
+			reader = new BufferedReader(new FileReader(src));
+
+			String line = null;
+			while (null != (line = reader.readLine())) {
+				String [] info = line.split(", ");
+				Person p = new Person();
+				for (int i = 0; i < info.length; i++) {
+					p.setName(info[0]);
+					p.setFile(info[1]);
+					p.setStatus(info[2]);
+					p.setGender(info[3]);
+					p.setAge(Integer.parseInt(info[4]));
+					p.setState(info[5]);
+				}
+				if (p.getAge() >= 0 && p.getAge() <=2) {
+					YoungChild y = new YoungChild();
+					y.setName(p.getName());
+					y.setFile(p.getFile());
+					y.setStatus(p.getStatus());
+					y.setGender(p.getGender());
+					y.setAge(p.getAge());
+					y.setState(p.getState());
+					Person.person.add(y);
+			
+				}
+				else if (p.getAge() > 2 && p.getAge() <= 16) {
+					Child c = new Child();
+					c.setName(p.getName());
+					c.setFile(p.getFile());
+					c.setStatus(p.getStatus());
+					c.setGender(p.getGender());
+					c.setAge(p.getAge());
+					c.setState(p.getState());
+					Person.person.add(c);
+				}
+				else if (p.getAge() > 16 && p.getAge() <= 150) {
+					Adult a = new Adult();
+					a.setName(p.getName());
+					a.setFile(p.getFile());
+					a.setStatus(p.getStatus());
+					a.setGender(p.getGender());
+					a.setAge(p.getAge());
+					a.setState(p.getState());
+					Person.person.add(a);
+				}else throw new Exception();
+			}
+			
+		}catch (FileNotFoundException e){
+			AlertBox.alert("Error", "File does not exist");
+			System.out.println("File does not exist");
+		}catch (Exception e) {
+			AlertBox.alert("Error", "Fail to read a file");
+			System.out.println("Fail to read a file");
+		}finally {
+			try {
+				if (null != reader) {
+					reader.close();
+				}
+			} catch (Exception e2) {
+				System.out.println("Fail to close");
+			}
+		}
+		
+		for (int i = 0; i < Person.person.size(); i++) {
+			DBTest.addintodb(Person.person.get(i));
+		}
+		
+		AlertBox.alert("Congratulation", "Database Synchronized successfully");
+		System.out.println("Database Synchronized successfully");
+
+		DBTest.viewdb();
+		
+		DBTest.checkdatabase();
+		
+		window = primaryStage;
+	
+		window.setTitle("MiniNet");
+		
+		Button b1 = new Button();
+		Button b2 = new Button();
+		Button b3 = new Button();
+		Button b4 = new Button();
+		Button b5 = new Button();
+		Button b6 = new Button();
+		Button b7 = new Button();
+		Button backinaddpage = new Button();
+		Button add = new Button();
+		Button backinselectpage = new Button();
+		Button select = new Button();
+		Button backinfriendspage = new Button();
+		Button backinparentspage = new Button();
+		Button backinchildrenpage = new Button();
+		Button backincouplepage = new Button();
+		Button backinclassmatespage = new Button();
+		Button backincolleaguespage = new Button();
+		Button backindisplaypage = new Button();
+		Button backindeletepage = new Button();
+		Button connectfriends = new Button();
+		Button connectparents = new Button();
+		Button connectchildren = new Button();
+		Button connectclassmates = new Button();
+		Button connectcouple = new Button();
+		Button connectcolleagues = new Button();
+		Button connfriend = new Button();
+		Button connparents = new Button();
+		Button connchild = new Button();
+		Button conncouple = new Button();
+		Button connclassmates = new Button();
+		Button conncolleagues = new Button();
+		Button backtoconnectpage = new Button();
+		Button backinidentifypage = new Button();
+		Button deletebutton = new Button();
+		Button identifyrelation = new Button();
+		
+		// Set table column
+		TableColumn <Person, String> nameColumn = new TableColumn<> ("Name");
+		nameColumn.setMinWidth(300);
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+		
+		TableColumn <Person, String> fileColumn = new TableColumn<> ("File");
+		fileColumn.setMinWidth(300);
+		fileColumn.setCellValueFactory(new PropertyValueFactory<>("file"));
+		
+		TableColumn <Person, String> statusColumn = new TableColumn<> ("Status");
+		statusColumn.setMinWidth(300);
+		statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+		
+		TableColumn <Person, String> genderColumn = new TableColumn<> ("Gender");
+		genderColumn.setMinWidth(100);
+		genderColumn.setCellValueFactory(new PropertyValueFactory<>("gender"));
+		
+		TableColumn <Person, String> ageColumn = new TableColumn<> ("Age");
+		ageColumn.setMinWidth(100);
+		ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
+	
+		TableColumn <Person, String> stateColumn = new TableColumn<> ("State");
+		stateColumn.setMinWidth(100);
+		stateColumn.setCellValueFactory(new PropertyValueFactory<>("state"));
+		
+		
+		personlist = new TableView<>();
+		personlist1 = new TableView<>();
+		personlistinfriendspage = new TableView<>();
+		personlistinparentspage = new TableView<>();
+		personlistinchildrenpage = new TableView<>();
+		personlistincouplepage = new TableView<>();
+		personlistinclassmatespage = new TableView<>();
+		personlistincolleaguespage = new TableView<>();
+		personlistindeletepage = new TableView<>();
+		personlistinidentifypage = new TableView<>();
+		
+		
+		personlist.setItems(Person.getPerson());
+		personlist1.setItems(Person.getPerson());
+		personlistinfriendspage.setItems(Person.getPerson());
+		personlistinparentspage.setItems(Person.getPerson());
+		personlistinchildrenpage.setItems(Person.getPerson());
+		personlistincouplepage.setItems(Person.getPerson());
+		personlistinclassmatespage.setItems(Person.getPerson());
+		personlistincolleaguespage.setItems(Person.getPerson());
+		personlistindeletepage.setItems(Person.getPerson());
+		personlistinidentifypage.setItems(Person.getPerson());
+		
+		personlist.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		personlist1.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		personlistinfriendspage.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		personlistinparentspage.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		personlistinchildrenpage.getColumns().addAll(nameColumn,fileColumn,  statusColumn, genderColumn, ageColumn, stateColumn);
+		personlistincouplepage.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		personlistinclassmatespage.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		personlistincolleaguespage.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		personlistindeletepage.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		personlistinidentifypage.getColumns().addAll(nameColumn, fileColumn, statusColumn, genderColumn, ageColumn, stateColumn);
+		
+		// Set button for main menu
+		b1.setText("1. List everyone");
+		b1.setOnAction(e -> {
+			window.setScene(displaypage);
+		});
+		
+		b2.setText("2. Add a person");
+		b2.setOnAction(e -> {
+			window.setScene(addpage);
+		});
+		
+		b3.setText("3. Select a person");
+		b3.setOnAction(e -> {
+			window.setScene(selectpage);
+		});
+		
+		b4.setText("4. Connect person");
+		b4.setOnAction( e -> {
+			window.setScene(connectpage);
+		});
+		
+		b5.setText("5. Delete a person");
+		b5.setOnAction( e -> {
+			window.setScene(deletepersonpage);
+		});
+		
+		b6.setText("6. Identify");
+		b6.setOnAction(e -> {
+			window.setScene(identifyrelationship);
+		});
+
+		
+		b7.setText("7. Exit");
+		b7.setOnAction(e -> {
+			window.close();
+			System.exit(0);
+		});
+		
+		
+		// Menu
+		VBox menu = new VBox(20);
+		menu.setPadding(new Insets(10,10,10,10));
+		menu.setAlignment(Pos.CENTER);
+		menu.getChildren().addAll(b1, b2, b3, b4, b5, b6, b7);
+		
+		
+		// Display page
+		GridPane disp1 = new GridPane();
+		GridPane disp2 = new GridPane();
+		
+		disp1.setPadding(new Insets(10,10,10,10));
+		disp1.setVgap(8);
+		disp1.setHgap(10);
+		
+		disp2.setPadding(new Insets(10,10,10,10));
+		disp2.setVgap(8);
+		disp2.setHgap(10);
+		
+		disp2.setConstraints(backindisplaypage, 0, 0);
+		
+		disp1.getChildren().add(personlist);
+		disp2.getChildren().add(backindisplaypage);
+		
+		VBox root = new VBox(disp1, disp2);
+		
+		// Set button for display page
+		backindisplaypage.setText("Back");
+		backindisplaypage.setOnAction(e -> {
+			window.setScene(homepage);
+		});
+		
+		
+		
+		// Add person page
+		GridPane addp = new GridPane();
+		addp.setPadding(new Insets(10,10,10,10));
+		addp.setVgap(8);
+		addp.setHgap(10);
+		
+		// Name Label
+		Label namelabel = new Label("Name: ");
+		addp.setConstraints(namelabel, 0, 0);
+		
+		// Name Input
+		TextField nameInput = new TextField();
+		addp.setConstraints(nameInput, 1, 0);
+		
+		// File Label 
+		Label filelabel = new Label("File: ");
+		addp.setConstraints(filelabel, 0, 1);
+		// File input
+		TextField fileInput = new TextField();
+		addp.setConstraints(fileInput, 1, 1);
+		
+		// Gender Label
+		Label genderlabel = new Label("Gender: ");
+		addp.setConstraints(genderlabel, 0, 2);
+		
+		//Gender Input
+		TextField genderInput = new TextField();
+		addp.setConstraints(genderInput, 1, 2);
+		
+		// Age Label
+		Label agelabel = new Label("Age: ");
+		addp.setConstraints(agelabel, 0, 3);
+		
+		// Age Input
+		TextField ageInput = new TextField();
+		addp.setConstraints(ageInput, 1, 3);
+		
+		// Status Label 
+		Label statuslabel = new Label("Status: ");
+		addp.setConstraints(statuslabel, 0, 4);
+
+		// Status Input
+		TextField statusInput = new TextField();
+		addp.setConstraints(statusInput, 1, 4);
+		
+		// State Label
+		Label statelabel = new Label("State: ");
+		addp.setConstraints(statelabel, 0, 5);
+
+		// State Input
+		TextField stateInput = new TextField();
+		addp.setConstraints(stateInput, 1, 5);
+		
+		//Set back and add button
+		addp.setConstraints(backinaddpage, 0, 6);
+		addp.setConstraints(add, 1, 6);
 
 
-public static void display(List list) {
-	for (Iterator it = list.iterator(); it.hasNext();) {
-		Person p = (Person)it.next();	
-		System.out.println(p);
+		addp.getChildren().addAll(namelabel, nameInput, 
+									filelabel, fileInput,
+								 	genderlabel, genderInput, 
+								 	agelabel, ageInput, 
+								 	statuslabel, statusInput, 
+								 	statelabel, stateInput, 
+								 	add, backinaddpage);
+		
+		//	Select person page
+		GridPane sele1 = new GridPane();
+		GridPane sele = new GridPane();
+		sele1.setPadding(new Insets(10,10,10,10));
+		sele1.setVgap(8);
+		sele1.setHgap(10);
+		
+		sele.setPadding(new Insets(10,10,10,10));
+		sele.setVgap(8);
+		sele.setHgap(10);
+		
+		// List label
+		Label personlistlabel = new Label();
+
+				
+		// Select Label
+		Label selectlabel = new Label("Selection: ");
+		sele.setConstraints(selectlabel, 0, 0);
+				
+		// Select Input
+		TextField selectInput = new TextField();
+		sele.setConstraints(selectInput, 1, 0);
+		
+		// Set select page
+		sele1.getChildren().add(personlist1);
+		sele.setConstraints(backinselectpage, 0, 1);
+		sele.setConstraints(select, 1, 1);
+		
+		sele.getChildren().addAll(selectlabel, selectInput, backinselectpage, select);
+		VBox root1 = new VBox(sele1, sele);
+		
+		
+		
+		// Connect menu
+		GridPane conn = new GridPane();
+		conn.setPadding(new Insets(10,10,10,10));
+		conn.setVgap(8);
+		conn.setHgap(10);
+		
+		// Set buttons in connect menu
+		connfriend.setText("Connect Friends");
+		connparents.setText("Connect Parents");
+		connchild.setText("Connect Children");
+		conncouple.setText("Connect Couple");
+		connclassmates.setText("Connect Classmates");
+		conncolleagues.setText("Connect Colleagues");
+		backtoconnectpage.setText("Back");
+
+		conn.setConstraints(connfriend, 0, 1);
+		conn.setConstraints(connparents, 0, 2);
+		conn.setConstraints(connchild, 0, 3);
+		conn.setConstraints(conncouple, 0, 4);
+		conn.setConstraints(connclassmates, 0, 5);
+		conn.setConstraints(conncolleagues, 0, 6);
+		conn.setConstraints(backtoconnectpage, 0, 7);
+
+		conn.getChildren().addAll(connfriend, connparents, connchild, conncouple, connclassmates, conncolleagues, backtoconnectpage);
+
+		
+		// Set function for connection button
+		backtoconnectpage.setOnAction(e -> {
+			window.setScene(homepage);
+		});
+		
+		connfriend.setOnAction(e -> {
+			window.setScene(friendconnection);	
+		});
+		connparents.setOnAction(e -> {
+			window.setScene(parentsconnection);	
+		});
+		connchild.setOnAction(e -> {
+			window.setScene(childconnection);	
+		});
+		conncouple.setOnAction(e -> {
+			window.setScene(coupleconnection);	
+		});
+		connclassmates.setOnAction(e -> {
+			window.setScene(classmatesconnection);		
+		});
+		conncolleagues.setOnAction(e -> {
+			window.setScene(colleaguesconnection);	
+		});
+		
+		
+		
+		// Connect friends page
+		GridPane friendpage = new GridPane();
+		GridPane friendpagetable = new GridPane();
+		
+		friendpagetable.setPadding(new Insets(10,10,10,10));
+		friendpagetable.setVgap(8);
+		friendpagetable.setHgap(10);
+				
+		friendpage.setPadding(new Insets(10,10,10,10));
+		friendpage.setVgap(8);
+		friendpage.setHgap(10);
+				
+		Label selectfriend1 = new Label("First person: ");
+		friendpage.setConstraints(selectfriend1, 0, 0);
+		
+		TextField firstfriend = new TextField();
+		friendpage.setConstraints(firstfriend, 1, 0);
+		
+		Label selectfriend2 = new Label("Second person: ");
+		friendpage.setConstraints(selectfriend2, 0, 1);
+			
+		TextField secondfriend = new TextField();
+		friendpage.setConstraints(secondfriend, 1, 1);
+
+		friendpage.setConstraints(backinfriendspage, 0, 2);
+		friendpage.setConstraints(connectfriends, 1, 2);
+
+		
+		friendpagetable.getChildren().add(personlistinfriendspage);
+		friendpage.getChildren().addAll(selectfriend1, firstfriend, selectfriend2, secondfriend, backinfriendspage, connectfriends);
+		
+		VBox friendpageroot = new VBox(friendpagetable, friendpage);
+
+		
+		// Connect parents page
+		GridPane parentspage = new GridPane();
+		GridPane parentspagetable = new GridPane();
+		
+		parentspagetable.setPadding(new Insets(10,10,10,10));
+		parentspagetable.setVgap(8);
+		parentspagetable.setHgap(10);
+				
+		parentspage.setPadding(new Insets(10,10,10,10));
+		parentspage.setVgap(8);
+		parentspage.setHgap(10);
+		
+		Label selectparent1 = new Label("First person: ");
+		parentspage.setConstraints(selectparent1, 0, 0);
+		
+		TextField firstparent = new TextField();
+		parentspage.setConstraints(firstparent, 1, 0);
+		
+		Label selectparent2 = new Label("Second person: ");
+		parentspage.setConstraints(selectparent2, 0, 1);
+			
+		TextField secondparent = new TextField();
+		parentspage.setConstraints(secondparent, 1, 1);
+
+		parentspage.setConstraints(backinparentspage, 0, 2);
+		parentspage.setConstraints(connectparents, 1, 2);
+		
+		parentspagetable.getChildren().add(personlistinparentspage);
+		parentspage.getChildren().addAll(selectparent1, firstparent, selectparent2, secondparent, backinparentspage, connectparents);
+		
+		VBox parentspageroot = new VBox(parentspagetable, parentspage);
+		
+		// Connect child page
+		GridPane childrenpage = new GridPane();
+		GridPane childrenpagetable = new GridPane();
+		
+		childrenpagetable.setPadding(new Insets(10,10,10,10));
+		childrenpagetable.setVgap(8);
+		childrenpagetable.setHgap(10);
+				
+		childrenpage.setPadding(new Insets(10,10,10,10));
+		childrenpage.setVgap(8);
+		childrenpage.setHgap(10);
+		
+		Label selectchild1 = new Label("First person: ");
+		childrenpage.setConstraints(selectchild1, 0, 0);
+		
+		TextField firstchild = new TextField();
+		childrenpage.setConstraints(firstchild, 1, 0);
+		
+		Label selectchild2 = new Label("Second person: ");
+		childrenpage.setConstraints(selectchild2, 0, 1);
+			
+		TextField secondchild = new TextField();
+		childrenpage.setConstraints(secondchild, 1, 1);
+		
+		childrenpage.setConstraints(backinchildrenpage, 0, 2);
+		childrenpage.setConstraints(connectchildren, 1, 2);
+		
+		childrenpagetable.getChildren().add(personlistinchildrenpage);
+		childrenpage.getChildren().addAll(selectchild1, firstchild, selectchild2, secondchild, backinchildrenpage, connectchildren);
+		
+		VBox childrenpageroot = new VBox(childrenpagetable, childrenpage);
+		
+		// Connect couple page
+		GridPane couplepage = new GridPane();
+		GridPane couplepagetable = new GridPane();
+		
+		couplepagetable.setPadding(new Insets(10,10,10,10));
+		couplepagetable.setVgap(8);
+		couplepagetable.setHgap(10);
+				
+		couplepage.setPadding(new Insets(10,10,10,10));
+		couplepage.setVgap(8);
+		couplepage.setHgap(10);
+		
+		Label selectcouple1 = new Label("First person: ");
+		couplepage.setConstraints(selectcouple1, 0, 0);
+		
+		TextField firstcouple = new TextField();
+		couplepage.setConstraints(firstcouple, 1, 0);
+		
+		Label selectcouple2 = new Label("Second person: ");
+		couplepage.setConstraints(selectcouple2, 0, 1);
+			
+		TextField secondcouple= new TextField();
+		couplepage.setConstraints(secondcouple, 1, 1);
+		
+		couplepage.setConstraints(backincouplepage, 0, 2);
+		couplepage.setConstraints(connectcouple, 1, 2);
+		
+		couplepage.getChildren().addAll(selectcouple1, firstcouple, selectcouple2, secondcouple, backincouplepage, connectcouple);
+		couplepagetable.getChildren().add(personlistincouplepage);
+		
+		VBox couplepageroot = new VBox(couplepagetable, couplepage);
+		
+		// Connect classmates page
+		GridPane classmatepage = new GridPane();
+		GridPane classmatepagetable = new GridPane();
+	
+		classmatepagetable.setPadding(new Insets(10,10,10,10));
+		classmatepagetable.setVgap(8);
+		classmatepagetable.setHgap(10);
+				
+		classmatepage.setPadding(new Insets(10,10,10,10));
+		classmatepage.setVgap(8);
+		classmatepage.setHgap(10);
+		
+		Label selectclassmate1 = new Label("First person: ");
+		classmatepage.setConstraints(selectclassmate1, 0, 0);
+		
+		TextField firstclassmate = new TextField();
+		classmatepage.setConstraints(firstclassmate, 1, 0);
+		
+		Label selectclassmate2 = new Label("Second person: ");
+		classmatepage.setConstraints(selectclassmate2, 0, 1);
+			
+		TextField secondclassmate= new TextField();
+		classmatepage.setConstraints(secondclassmate, 1, 1);
+		
+		classmatepage.setConstraints(backinclassmatespage, 0, 2);
+		classmatepage.setConstraints(connectclassmates, 1, 2);
+		
+		classmatepage.getChildren().addAll(selectclassmate1, firstclassmate, selectclassmate2, secondclassmate, backinclassmatespage, connectclassmates);
+		classmatepagetable.getChildren().add(personlistinclassmatespage);
+
+		VBox classmatespageroot = new VBox(classmatepagetable, classmatepage);
+		
+		// Connect colleagues page
+		GridPane colleaguespage = new GridPane();
+		GridPane colleaguespagetable = new GridPane();
+	
+		colleaguespagetable.setPadding(new Insets(10,10,10,10));
+		colleaguespagetable.setVgap(8);
+		colleaguespagetable.setHgap(10);
+				
+		colleaguespage.setPadding(new Insets(10,10,10,10));
+		colleaguespage.setVgap(8);
+		colleaguespage.setHgap(10);
+		
+		Label selectcolleague1 = new Label("First person: ");
+		colleaguespage.setConstraints(selectcolleague1, 0, 0);
+		
+		TextField firstcolleague = new TextField();
+		colleaguespage.setConstraints(firstcolleague, 1, 0);
+		
+		Label selectcolleague2 = new Label("Second person: ");
+		colleaguespage.setConstraints(selectcolleague2, 0, 1);
+			
+		TextField secondcolleague= new TextField();
+		colleaguespage.setConstraints(secondcolleague, 1, 1);
+		
+		colleaguespage.setConstraints(backincolleaguespage, 0, 2);
+		colleaguespage.setConstraints(connectcolleagues, 1, 2);
+		
+		colleaguespage.getChildren().addAll(selectcolleague1, firstcolleague, selectcolleague2, secondcolleague, backincolleaguespage, connectcolleagues);
+		colleaguespagetable.getChildren().add(personlistincolleaguespage);
+		
+		VBox colleaguespageroot = new VBox(colleaguespagetable, colleaguespage);
+
+		// Delete page
+		GridPane deletepage = new GridPane();
+		GridPane deletepagetable = new GridPane();
+		
+		deletepagetable.setPadding(new Insets(10,10,10,10));
+		deletepagetable.setVgap(8);
+		deletepagetable.setHgap(10);
+				
+		deletepage.setPadding(new Insets(10,10,10,10));
+		deletepage.setVgap(8);
+		deletepage.setHgap(10);
+		
+		Label deletepone = new Label("First person: ");
+		deletepage.setConstraints(deletepone, 0, 0);
+		
+		TextField deleteinput = new TextField();
+		deletepage.setConstraints(deleteinput, 1, 0);
+		
+		
+		deletepage.setConstraints(backindeletepage, 0, 1);
+		deletepage.setConstraints(deletebutton, 1, 1);
+		
+		deletepage.getChildren().addAll(deletepone, deleteinput, backindeletepage, deletebutton);
+		deletepagetable.getChildren().add(personlistindeletepage);
+
+		VBox deletepageroot = new VBox(deletepagetable, deletepage);
+
+		
+		// Identify page
+		GridPane identifypage = new GridPane();
+		GridPane identifypagetable = new GridPane();
+		
+		identifypagetable.setPadding(new Insets(10,10,10,10));
+		identifypagetable.setVgap(8);
+		identifypagetable.setHgap(10);
+				
+		identifypage.setPadding(new Insets(10,10,10,10));
+		identifypage.setVgap(8);
+		identifypage.setHgap(10);
+		
+		Label selectperson1 = new Label("First person: ");
+		identifypage.setConstraints(selectperson1, 0, 0);
+		
+		TextField firstone = new TextField();
+		identifypage.setConstraints(firstone, 1, 0);
+		
+		Label selectperson2 = new Label("Second person: ");
+		identifypage.setConstraints(selectperson2, 0, 1);
+			
+		TextField secondone = new TextField();
+		identifypage.setConstraints(secondone, 1, 1);
+		
+		identifypage.setConstraints(backinidentifypage, 0, 2);
+		identifypage.setConstraints(identifyrelation, 1, 2);
+		
+		identifypage.getChildren().addAll(selectperson1, firstone, selectperson2, secondone, backinidentifypage, identifyrelation);
+		identifypagetable.getChildren().add(personlistinidentifypage);
+		
+		VBox identifypageroot = new VBox(identifypagetable, identifypage);
+		
+		// Set page
+		displaypage = new Scene (root, 900, 500);
+		addpage = new Scene(addp, 400, 350);
+		selectpage = new Scene(root1, 900, 500);
+		connectpage = new Scene(conn, 400, 350);
+		friendconnection = new Scene(friendpageroot, 900, 500);
+		parentsconnection = new Scene(parentspageroot, 900, 500);
+		childconnection = new Scene(childrenpageroot, 900, 500);
+		coupleconnection = new Scene(couplepageroot, 900, 500);
+		classmatesconnection = new Scene(classmatespageroot, 900, 500);
+		colleaguesconnection = new Scene(colleaguespageroot, 900, 500);
+		deletepersonpage = new Scene(deletepageroot, 900, 500);
+		identifyrelationship = new Scene(identifypageroot, 900, 500);
+		
+		// Back button to return home page in add page
+		backinaddpage.setText("Back");
+		backinaddpage.setOnAction(e -> {
+			window.setScene(homepage);
+		});
+		
+		// Back button to return home page in select page
+		backinselectpage.setText("Back");
+		backinselectpage.setOnAction(e -> {
+			window.setScene(homepage);
+		});
+		
+		// Back button to return connect page in friends page
+		backinfriendspage.setText("Back");
+		backinfriendspage.setOnAction(e -> {
+			window.setScene(connectpage);
+		});
+		
+		// Connect friends button
+		connectfriends.setText("Connect Friends");
+		connectfriends.setOnAction(e -> {
+			int firstperson = 0;
+			int secondperson = 0;
+			try {
+				if (SelectisInt(firstfriend, firstfriend.getText())
+						&& SelectisInt(secondfriend, secondfriend.getText())) 
+				{
+					firstperson = Integer.parseInt(firstfriend.getText());
+					secondperson = Integer.parseInt(secondfriend.getText());
+				}
+				else throw new Exception();
+			}catch (Exception e1) {
+				AlertBox.alert("Error ", "Input a number ");
+			}
+			
+			try {
+				if ((0 < firstperson && firstperson <= Person.person.size()) 
+						&& (0 < secondperson && secondperson <= Person.person.size())
+					)
+				{
+					linkfriends(Person.person.get(firstperson - 1), Person.person.get(secondperson - 1));
+				}
+				else throw new Exception();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				AlertBox.alert("Error", "Invalid Selection");
+			}
+		});
+		
+		// Connect parents button
+		connectparents.setText("Connect Parents");
+		connectparents.setOnAction(e -> {
+			int firstperson = 0;
+			int secondperson = 0;
+			try {
+				if (SelectisInt(firstparent, firstparent.getText())
+						&& SelectisInt(secondparent, secondparent.getText())) 
+				{
+					firstperson = Integer.parseInt(firstparent.getText());
+					secondperson = Integer.parseInt(secondparent.getText());
+				}
+				else throw new Exception();
+			}catch (Exception e1) {
+				AlertBox.alert("Error ", "Input a number ");
+			}
+			
+			try {
+				if ((0 < firstperson && firstperson <= Person.person.size()) 
+						&& (0 < secondperson && secondperson <= Person.person.size())
+					)
+				{
+					linkparents(Person.person.get(firstperson - 1), Person.person.get(secondperson - 1));
+				}
+				else throw new Exception();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				AlertBox.alert("Error", "Invalid Selection");
+			}
+		});
+		
+		//Back button to return connect page in parents page
+		backinparentspage.setText("Back");
+		backinparentspage.setOnAction(e -> {
+			window.setScene(connectpage);
+		});
+		
+		// Connect children button
+		connectchildren.setText("Connect Children");
+		connectchildren.setOnAction(e -> {
+			int firstperson = 0;
+			int secondperson = 0;
+			try {
+				if (SelectisInt(firstchild, firstchild.getText())
+						&& SelectisInt(secondchild, secondchild.getText())) 
+				{
+					firstperson = Integer.parseInt(firstchild.getText());
+					secondperson = Integer.parseInt(secondchild.getText());
+				}
+				else throw new Exception();
+			}catch (Exception e1) {
+				AlertBox.alert("Error ", "Input a number ");
+			}
+			
+			try {
+				if ((0 < firstperson && firstperson <= Person.person.size()) 
+						&& (0 < secondperson && secondperson <= Person.person.size())
+					)
+				{
+					linkchildren(Person.person.get(firstperson - 1), Person.person.get(secondperson - 1));
+				}
+				else throw new Exception();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				AlertBox.alert("Error", "Invalid Selection");
+			}
+		});
+		
+		// Back button to return connect page in children page
+		backinchildrenpage.setText("Back");
+		backinchildrenpage.setOnAction(e -> {
+			window.setScene(connectpage);
+		});
+		
+		// Connect couple button
+		connectcouple.setText("Connect Couple");
+		connectcouple.setOnAction(e -> {
+			int firstperson = 0;
+			int secondperson = 0;
+			try {
+				if (SelectisInt(firstcouple, firstcouple.getText())
+						&& SelectisInt(secondcouple, secondcouple.getText())) 
+				{
+					firstperson = Integer.parseInt(firstcouple.getText());
+					secondperson = Integer.parseInt(secondcouple.getText());
+				}
+				else throw new Exception();
+			}catch (Exception e1) {
+				AlertBox.alert("Error ", "Input a number ");
+			}
+			
+			try {
+				if ((0 < firstperson && firstperson <= Person.person.size()) 
+						&& (0 < secondperson && secondperson <= Person.person.size())
+					)
+				{
+					linkcouple(Person.person.get(firstperson - 1), Person.person.get(secondperson - 1));
+				}
+				else throw new Exception();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				AlertBox.alert("Error", "Invalid Selection");
+			}
+		});
+		
+		// Back button to return connect page in couple page
+		backincouplepage.setText("Back");
+		backincouplepage.setOnAction(e -> {
+			window.setScene(connectpage);
+		});
+		
+		// Connect classmates button
+		connectclassmates.setText("Connect Classmates");
+		connectclassmates.setOnAction(e -> {
+			int firstperson = 0;
+			int secondperson = 0;
+			try {
+				if (SelectisInt(firstclassmate, firstclassmate.getText())
+						&& SelectisInt(secondclassmate, secondclassmate.getText())) 
+				{
+					firstperson = Integer.parseInt(firstclassmate.getText());
+					secondperson = Integer.parseInt(secondclassmate.getText());
+				}
+				else throw new Exception();
+			}catch (Exception e1) {
+				AlertBox.alert("Error ", "Input a number ");
+			}
+			
+			try {
+				if ((0 < firstperson && firstperson <= Person.person.size()) 
+						&& (0 < secondperson && secondperson <= Person.person.size())
+					)
+				{
+					linkclassmates(Person.person.get(firstperson - 1), Person.person.get(secondperson - 1));
+				}
+				else throw new Exception();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				AlertBox.alert("Error", "Invalid Selection");
+			}
+		});
+		
+		// Back button to return connect page in classmates page
+		backinclassmatespage.setText("Back");
+		backinclassmatespage.setOnAction(e -> {
+			window.setScene(connectpage);
+		});
+		
+		// Connect colleagues button
+		connectcolleagues.setText("Connect Colleagues");
+		connectcolleagues.setOnAction(e -> {
+			int firstperson = 0;
+			int secondperson = 0;
+			try {
+				if (SelectisInt(firstcolleague, firstcolleague.getText())
+						&& SelectisInt(secondcolleague, secondcolleague.getText())) 
+				{
+					firstperson = Integer.parseInt(firstcolleague.getText());
+					secondperson = Integer.parseInt(secondcolleague.getText());
+				}
+				else throw new Exception();
+			}catch (Exception e1) {
+				AlertBox.alert("Error ", "Input a number ");
+			}
+			
+			try {
+				if ((0 < firstperson && firstperson <= Person.person.size()) 
+						&& (0 < secondperson && secondperson <= Person.person.size())
+					)
+				{
+					linkcolleagues(Person.person.get(firstperson - 1), Person.person.get(secondperson - 1));
+				}
+				else throw new Exception();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				AlertBox.alert("Error", "Invalid Selection");
+			}
+		});
+		
+		// Back button to return connect page in colleagues page
+		backincolleaguespage.setText("Back");
+		backincolleaguespage.setOnAction(e -> {
+			window.setScene(connectpage);
+		});
+		
+		
+		// Delete button
+		deletebutton.setText("Delete");
+		deletebutton.setOnAction(e -> {
+			int selection = 0;
+				try {
+					if(SelectisInt(deleteinput, deleteinput.getText())) {
+						selection = Integer.parseInt(deleteinput.getText());
+					} else throw new Exception();
+				}catch (Exception e1){
+					AlertBox.alert("Error ", "Input a number ");
+				}
+				
+				try {
+					if ((0 < selection && selection <= Person.person.size())) {
+						DBTest.deletedb(Person.person.get(selection - 1));
+						Person.person.remove(selection - 1);
+						DBTest.viewdb();
+						AlertBox.alert("Congratulation", "This person has been deleted");
+					}
+					else throw new Exception();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					AlertBox.alert("Error", "Invalid Selection");
+				}
+			});
+		
+	
+		// Back button in delete page
+		backindeletepage.setText("Back");
+		backindeletepage.setOnAction(e -> {
+			window.setScene(homepage);
+		});
+		
+		
+		// Identify button to identify relationship between two people
+		identifyrelation.setText("Identify");
+		identifyrelation.setOnAction(e -> {
+			int firstperson = 0;
+			int secondperson = 0;
+			try {
+				if (SelectisInt(firstone, firstone.getText())
+						&& SelectisInt(secondone, secondone.getText())) 
+				{
+					firstperson = Integer.parseInt(firstone.getText());
+					secondperson = Integer.parseInt(secondone.getText());
+				}
+				else throw new Exception();
+			}catch (Exception e1) {
+				AlertBox.alert("Error ", "Input a number ");
+			}
+			
+			try {
+				if ((0 < firstperson && firstperson <= Person.person.size()) 
+						&& (0 < secondperson && secondperson <= Person.person.size())
+					)
+				{
+					identifyrelationship (Person.person.get(firstperson - 1), Person.person.get(secondperson - 1));
+				}
+				else throw new Exception();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				AlertBox.alert("Error", "Invalid Selection");
+			}
+		});
+		
+		// Back button to return to home page in identify page
+		backinidentifypage.setText("Back");
+		backinidentifypage.setOnAction(e -> {
+			window.setScene(homepage);
+		});
+		
+		// Add button
+		add.setText("Add");
+		add.setOnAction(e -> {
+			Person p = new Person();
+			if (p.NameisString(nameInput, nameInput.getText()) && p.FileisString(fileInput, fileInput.getText()) 
+					&& p.GenderisString(genderInput, genderInput.getText())
+					&& p.AgeisInt(ageInput, ageInput.getText()) && p.StatusisString(statusInput, statusInput.getText())
+					&& p.StateisString(stateInput, stateInput.getText())) {
+				try {
+					p.addperson();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			};
+		});
+		
+		// Select button
+		select.setText("Select");
+		select.setOnAction(e -> {
+			int selection = 0;
+			
+			try {
+				if (SelectisInt(selectInput, selectInput.getText())) {
+					selection = Integer.parseInt(selectInput.getText());
+				}
+				else throw new Exception();
+			}catch (Exception e1) {
+				AlertBox.alert("Error ", "Input a number ");
+			}
+			
+			try {
+				if ((0 < selection && selection <= Person.person.size())) {
+					AlertBox.alert("Person ", " Name: " + Person.person.get(selection - 1).getName() + " File: "+
+							Person.person.get(selection - 1).getFile() + "   Status: " +
+							Person.person.get(selection - 1).getStatus() + "   Gender: " +
+							Person.person.get(selection - 1).getGender() + "  Age: " +
+							Person.person.get(selection - 1).getAge() + "   State: " +
+							Person.person.get(selection - 1).getState());
+				}
+				else throw new Exception();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				AlertBox.alert("Error", "Invalid Selection");
+			}
+		});
+		
+		
+		// Home page
+		homepage = new Scene(menu, 500, 450);
+		window.setScene(homepage);
+		window.show();
+		
+	}
+	
+	public void linkfriends (Object obj1, Object obj2) throws Exception{
+		if (obj1 instanceof Adult) {
+			Adult a = (Adult) obj1;
+			a.connectfriends(obj2);
+		}
+		
+		if (obj1 instanceof Child) {
+			Child c = (Child) obj1;
+			c.connectfriends(obj2);
+		}
+		
+		try {
+			if (obj1 instanceof YoungChild) {		// Young Child
+				throw new TooYoungException();
+			}
+		}
+		catch (TooYoungException e){
+			AlertBox.alert("Error", "Cannot make friends with a young child");
+			System.out.println("Cannot make friends with a young child");
 		}
 	}
 
-public static void select(List list) {
-	for (int i = 0; i < list.size(); i++) {
-		System.out.println(i + 1 +"-------------" + list.get(i));
+	public void linkparents (Object obj1, Object obj2) throws Exception{
+		if (obj1 instanceof Adult) {
+			Adult a = (Adult) obj1;
+			a.connectparents(obj2);
+		}
+		if (obj1 instanceof Child) {
+			Child c = (Child) obj1;
+			c.connectparents(obj2);
+		}
+		if (obj1 instanceof YoungChild) {
+			YoungChild y = (YoungChild) obj1;
+			y.connectparents(obj2);
 		}
 	}
+	
+	public void linkchildren (Object obj1, Object obj2) throws Exception{
+		if (obj1 instanceof Adult) {
+			Adult a = (Adult) obj1;
+			a.connectchildren(obj2);
+		}
+		try {
+			if (obj1 instanceof Child) {
+				throw new NoChildException();
+			}
+			if (obj1 instanceof YoungChild) {
+				throw new NoChildException();
+			}
+		}
+		catch (NoChildException e) {
+			AlertBox.alert("Error", "Child or young child cannot add children");
+			System.out.println("Child or young child cannot add children");
+		}
+	}
+	
+	public void linkcouple (Object obj1, Object obj2) throws Exception{
+		if (obj1 instanceof Adult) {
+			Adult a = (Adult) obj1;
+			a.connectcouple(obj2);
+		}
+		//Child and Young Child
+		try {
+			if (obj1 instanceof Child) {
+				throw new NoCoupleException();
+			}
+			if (obj1 instanceof YoungChild) {
+				throw new NoCoupleException();
+			}
+		}
+		catch (NoCoupleException e) {
+			AlertBox.alert("Error", "Child or young child cannot add couple");
+			System.out.println("Child or young child cannot add couple");
+		}
+		
+	}
+	
+	public void linkclassmates (Object obj1, Object obj2) throws Exception{
+		if (obj1 instanceof Adult) {
+			Adult a = (Adult) obj1;
+			a.connectclassmates(obj2);
+		}
+		
+		if (obj1 instanceof Child) {
+			Child c = (Child) obj1;
+			c.connectclassmates(obj2);
+		}
+		
+		try {
+			if (obj1 instanceof YoungChild) {
+				throw new NotToBeClassmateException();
+			}																	
+		}catch (NotToBeClassmateException e) {
+			AlertBox.alert("Error", "Cannot connect a young child in a classmate relation");
+			System.out.println("Cannot connect a young child in a classmate relation");
+		}
+	}
+	
+	public void linkcolleagues (Object obj1, Object obj2) throws Exception{
+		if (obj1 instanceof Adult) {
+			Adult a = (Adult) obj1;
+			a.connectcolleague(obj2);
+		}
+		
+		try {
+			if (obj1 instanceof Child) {
+				throw new NoColleagueException();
+			}
+			if (obj1 instanceof YoungChild) {
+				throw new NoColleagueException();
+			}
+		}
+		catch (NoColleagueException e) {
+			AlertBox.alert("Error", "Child or young child cannot add colleague");
+			System.out.println("Child or young child cannot add colleague");
+		}
+		
+	}
+	
+	public void identifyrelationship (Object obj1, Object obj2) throws Exception{
+		if (obj1 instanceof Adult) {
+			Adult a = (Adult) obj1;
+			a.identify(obj2);
+		}
+		if (obj1 instanceof Child) {
+			Child c = (Child) obj1;
+			c.identify(obj2);
+		}
+		if (obj1 instanceof YoungChild) {
+			YoungChild y = (YoungChild) obj1;
+			y.identify(obj2);
+		}	
+	}
+	
+	public boolean SelectisInt (TextField input, String message) {
+		try {
+			int selection = Integer.parseInt(input.getText());
+			return true;
+		}
+		catch (NumberFormatException e){
+			return false;
+		}
+	}
+
+	
 }
